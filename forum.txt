@@ -1,0 +1,94 @@
+
+CREATE TABLE public.Musician_Addresses (
+                AddressID INTEGER NOT NULL,
+                Number VARCHAR NOT NULL,
+                Street1 VARCHAR NOT NULL,
+                Street2 VARCHAR NOT NULL,
+                City VARCHAR NOT NULL,
+                Zip_code INTEGER NOT NULL,
+                Telephone INTEGER NOT NULL,
+                CONSTRAINT muscian_addresses_id PRIMARY KEY (AddressID)
+);
+
+
+CREATE TABLE public.Musicians (
+                SSN INTEGER NOT NULL,
+                AddressID INTEGER NOT NULL,
+                Name VARCHAR NOT NULL,
+                CONSTRAINT musicians_id PRIMARY KEY (SSN, AddressID)
+);
+
+
+CREATE TABLE public.Album (
+                AlbumID INTEGER NOT NULL,
+                SSN INTEGER NOT NULL,
+                AddressID INTEGER NOT NULL,
+                Title VARCHAR NOT NULL,
+                Release_Date INTEGER NOT NULL,
+                Age INTEGER NOT NULL,
+                CONSTRAINT album_id PRIMARY KEY (AlbumID, SSN, AddressID, Title)
+);
+
+
+CREATE TABLE public.Song_Registration (
+                Title VARCHAR NOT NULL,
+                SSN INTEGER NOT NULL,
+                AddressID INTEGER NOT NULL,
+                AlbumID INTEGER NOT NULL,
+                Length INTEGER NOT NULL,
+                CONSTRAINT song_registration_id PRIMARY KEY (Title, SSN, AddressID, AlbumID)
+);
+
+
+CREATE TABLE public.Instrument (
+                Name VARCHAR NOT NULL,
+                SSN INTEGER NOT NULL,
+                AddressID INTEGER NOT NULL,
+                Title VARCHAR NOT NULL,
+                AlbumID INTEGER NOT NULL,
+                Pitch VARCHAR NOT NULL,
+                CONSTRAINT instrument_id PRIMARY KEY (Name, SSN, AddressID, Title, AlbumID)
+);
+
+
+ALTER TABLE public.Musicians ADD CONSTRAINT musician_addresses_musicians_fk
+FOREIGN KEY (AddressID)
+REFERENCES public.Musician_Addresses (AddressID)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Instrument ADD CONSTRAINT musicians_instrument_fk
+FOREIGN KEY (AddressID, SSN)
+REFERENCES public.Musicians (AddressID, SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Song_Registration ADD CONSTRAINT musicians_song_registration_fk
+FOREIGN KEY (AddressID, SSN)
+REFERENCES public.Musicians (AddressID, SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Album ADD CONSTRAINT musicians_album_fk
+FOREIGN KEY (AddressID, SSN)
+REFERENCES public.Musicians (AddressID, SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Song_Registration ADD CONSTRAINT album_song_registration_fk
+FOREIGN KEY (Title, SSN, AddressID, AlbumID)
+REFERENCES public.Album (Title, SSN, AddressID, AlbumID)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Instrument ADD CONSTRAINT song_registration_instrument_fk
+FOREIGN KEY (SSN, AddressID, Title, AlbumID)
+REFERENCES public.Song_Registration (SSN, AddressID, Title, AlbumID)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
